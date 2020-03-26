@@ -1,0 +1,12 @@
+{
+    "hooks": {
+        "before:init": ["bash ./release.sh"]
+    },
+    "github": {
+        "release": true,
+        "assets": ["release.tar.gz"]
+    },
+    "npm": {
+        "publish": false
+    }
+}
