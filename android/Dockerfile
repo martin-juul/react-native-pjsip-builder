@@ -27,7 +27,7 @@ ENV ANDROID_SDK_DOWNLOAD_URL "https://dl.google.com/android/repository/tools_r25
 ENV ANDROID_SETUP_APIS "26"
 ENV ANDROID_TARGET_API 26
 
-ENV PJSIP_DOWNLOAD_URL "https://github.com/pjsip/pjproject/archive/2.11.tar.gz"
+ENV PJSIP_DOWNLOAD_URL "https://github.com/pjsip/pjproject/archive/2.10.tar.gz"
 
 ENV SWIG_DOWNLOAD_URL "http://prdownloads.sourceforge.net/swig/swig-4.0.2.tar.gz"
 

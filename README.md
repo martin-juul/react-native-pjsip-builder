@@ -6,7 +6,7 @@ Easily build PJSIP with: OpenSSL, OpenH264, Opus and G.729 for Android and iOS, 
 |----------------------|---------|
 | Android API          | 26      |
 | Android NDK          | r21d    |
-| PJSIP                | 2.11    |
+| PJSIP                | 2.10    |
 | OPENSSL              | 1.1.1k  |
 | OPENH264             | 2.1.1   | 
 | OPUS                 | 1.3.1   |

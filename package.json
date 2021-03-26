@@ -1,6 +1,6 @@
 {
   "name": "react-native-pjsip-builder",
-  "version": "3.5.0",
+  "version": "2.10",
   "scripts": {
     "release": "release-it"
   },
