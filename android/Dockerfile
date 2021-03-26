@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:xenial-20191212
 
 ##############################
 # Download dependencies
@@ -12,30 +12,28 @@ RUN dpkg --add-architecture i386 && \
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     software-properties-common git curl bzip2 gcc g++ binutils make autoconf openssl \
     libssl-dev ant libopus0 libpcre3 libpcre3-dev build-essential nasm libc6:i386 libstdc++6:i386 zlib1g:i386 \
-    openjdk-8-jdk unzip
+    openjdk-8-jdk unzip bison
 
 ##############################
 # Configuration
 ##############################
 
 # ENV TARGET_ARCHS "armeabi armeabi-v7a x86 mips arm64-v8a x86_64 mips64"
-ENV TARGET_ARCHS "armeabi-v7a x86 arm64-v8a x86_64" 
-ENV ANDROID_NDK_DOWNLOAD_URL "https://dl.google.com/android/repository/android-ndk-r12b-linux-x86_64.zip"
+ENV TARGET_ARCHS "armeabi-v7a x86 arm64-v8a x86_64"
+ENV ANDROID_NDK_DOWNLOAD_URL "https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip"
 ENV ANDROID_SDK_DOWNLOAD_URL "https://dl.google.com/android/repository/tools_r25.2.5-linux.zip"
-ENV ANDROID_SETUP_APIS "23 25"
-ENV ANDROID_BUILD_TOOLS_VERSION 25
-ENV ANDROID_TARGET_API 23
+ENV ANDROID_SETUP_APIS "26"
+ENV ANDROID_TARGET_API 26
 
-ENV PJSIP_DOWNLOAD_URL "http://www.pjsip.org/release/2.8/pjproject-2.8.tar.bz2"
+ENV PJSIP_DOWNLOAD_URL "https://github.com/pjsip/pjproject/archive/2.11.tar.gz"
 
-ENV SWIG_DOWNLOAD_URL "http://prdownloads.sourceforge.net/swig/swig-3.0.7.tar.gz"
+ENV SWIG_DOWNLOAD_URL "http://prdownloads.sourceforge.net/swig/swig-4.0.2.tar.gz"
 
-ENV OPENSSL_DOWNLOAD_URL "https://www.openssl.org/source/openssl-1.0.2g.tar.gz"
+ENV OPENSSL_DOWNLOAD_URL "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz"
 
-ENV OPENH264_DOWNLOAD_URL "https://github.com/cisco/openh264/archive/v1.7.0.tar.gz"
-ENV OPENH264_TARGET_NDK_LEVEL 23
+ENV OPENH264_DOWNLOAD_URL "https://github.com/cisco/openh264/tarball/openh264v2.1.0"
 
-ENV OPUS_DOWNLOAD_URL "http://downloads.xiph.org/releases/opus/opus-1.2.1.tar.gz"
+ENV OPUS_DOWNLOAD_URL "http://downloads.xiph.org/releases/opus/opus-1.3.1.tar.gz"
 ENV OPUS_ANDROID_MK_DOWNLOAD_URL "https://trac.pjsip.org/repos/raw-attachment/ticket/1904/Android.mk"
 
 ENV PATH /sources/android_ndk:$PATH
@@ -64,6 +62,7 @@ RUN cd /sources/android_sdk && \
     curl -L -# -o sdk.zip "$ANDROID_SDK_DOWNLOAD_URL" && \
     unzip sdk.zip
 
+# Install Android SDK(s)
 RUN cd /sources/android_sdk/tools && \
     ALL_SDK=$(./android list sdk --all) && \
     IFS=" " && \
@@ -77,11 +76,15 @@ RUN cd /sources/android_sdk/tools && \
     PACKAGE=$(echo "${ALL_SDK}" | grep "Build-tools" | grep "${BUILD_TOOLS_VERSION}" | head -n 1 | awk '{print $1}' | cut -d'-' -f 1) && \
     echo yes | ./android update sdk --all --filter ${PACKAGE} --no-ui --force
 
+# Copy Android SDK licenses file over
+RUN mkdir -p /sources/android_sdk/licenses
+ADD ./android-sdk-licenses /sources/android_sdk/licenses/
+
 # Download Pjsip
 RUN cd /sources/pjsip && \
-    curl -L -# -o pjsip.tar.bz2 "$PJSIP_DOWNLOAD_URL" && \
-    tar xjf pjsip.tar.bz2 && \
-    rm -rf pjsip.tar.bz2 && \
+    curl -L -# -o pjsip.tar.gz "$PJSIP_DOWNLOAD_URL" && \
+    tar xzf pjsip.tar.gz && \
+    rm -rf pjsip.tar.gz && \
     mv pjproject-*/* ./
 
 # Download Swig
@@ -113,18 +116,24 @@ RUN cd /sources/openh264 && \
     curl -L -# -o openh264.tar.gz "$OPENH264_DOWNLOAD_URL" && \
     tar xzf openh264.tar.gz && \
     rm -rf openh264.tar.gz && \
-    mv openh264-*/* ./
+    mv cisco-*/* ./
 
 ##############################
 # Build swig, openssl, opus, openh264
 ##############################
 
+#  Make tmp. directories
 RUN mkdir -p /output/openssl/ && \
     mkdir -p /output/openh264/ && \
     mkdir -p /output/pjsip && \
-    mkdir -p /output/opus
+    mkdir -p /output/opus && \
+    mkdir -p /output/swig
 
-# Build opus
+##############################
+# Build Opus, Swig, OpenH264, then OpenSSL
+##############################
+
+# Build Opus
 ADD ./build_opus.sh /usr/local/sbin/
 RUN IFS=" " && \
     for arch in $TARGET_ARCHS; \
@@ -134,9 +143,14 @@ RUN IFS=" " && \
 
 # Build swig
 RUN cd /sources/swig && \
-    ./configure && \
+    ./autogen.sh && \
+    ./configure --prefix=/output/swig && \
     make && \
     make install
+
+# Get Gradle 6.1.1
+ADD ./get_gradle.sh /usr/local/sbin/
+RUN get_gradle.sh
 
 # Build OpenH264
 ADD ./build_openh264.sh /usr/local/sbin/
