@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -xe
 
 TARGET_ARCH=$1
 TARGET_PATH=/output/opus/${TARGET_ARCH}
@@ -7,7 +7,7 @@ TARGET_PATH=/output/opus/${TARGET_ARCH}
 cp -r /sources/opus /tmp/opus
 
 cd /tmp/opus/jni
-ndk-build APP_ABI="${TARGET_ARCH}" 
+ndk-build APP_ABI="${TARGET_ARCH}"
 
 mkdir -p ${TARGET_PATH}/include
 mkdir -p ${TARGET_PATH}/lib

@@ -1,6 +1,6 @@
 #!/bin/bash
 #@see http://stackoverflow.com/questions/11929773/compiling-the-latest-openssl-for-android
-set -e
+set -xe
 
 GCC_VERSION=$(gcc --version | grep gcc | awk '{print $4}' | cut -d'.' -f1,2)
 
@@ -44,5 +44,5 @@ cd /tmp/openssl/
     no-unit-test \
     -D__ANDROID_API__=${ANDROID_API} \
     --openssldir=${TARGET_PATH}
-make && make install
+make -j"$(nproc)" && make install
 rm -rf /tmp/openssl/

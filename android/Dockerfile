@@ -1,5 +1,7 @@
 FROM ubuntu:xenial-20191212
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 ##############################
 # Download dependencies
 ##############################

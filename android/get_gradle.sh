@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xe
 
 GRADLE_VERSION=6.1.1
 curl -L -# -o /tmp/gradle-${GRADLE_VERSION}-bin.zip https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip

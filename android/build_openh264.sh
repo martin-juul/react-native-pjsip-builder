@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -xe
 
 TARGET_ARCH=$1
 TARGET_PATH=/output/openh264/${TARGET_ARCH}
@@ -39,7 +39,7 @@ for arch in arm arm64 x86 x86_64; do
 	ARGS="${ARGS} NDKLEVEL=${ndk_levels[$arch]} ARCH=$arch NDK_TOOLCHAIN_VERSION=clang"
 	/opt/gradle/latest/bin/gradle wrapper
 	make ${ARGS} clean
-	make ${ARGS} install
+	make -j"$(nproc)" ${ARGS} install
 done
 
 rm -rf /tmp/openh264
