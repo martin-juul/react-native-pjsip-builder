@@ -7,7 +7,7 @@ CONTAINER_NAME="react-native-pjsip-builder-${RANDOM}"
 rm -rf ./dist/android;
 mkdir -p ./dist/;
 
-docker build -t react-native-pjsip-builder/android ./android/;
+docker buildx build --progress plain -t react-native-pjsip-builder/android ./android/;
 docker run --name ${CONTAINER_NAME} ${IMAGE_NAME} bin/true
 
 docker cp ${CONTAINER_NAME}:/dist/android ./dist/android
