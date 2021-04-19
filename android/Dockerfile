@@ -24,14 +24,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
 ENV TARGET_ARCHS "armeabi-v7a x86 arm64-v8a x86_64"
 ENV ANDROID_NDK_DOWNLOAD_URL "https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip"
 ENV ANDROID_SDK_DOWNLOAD_URL "https://dl.google.com/android/repository/tools_r25.2.5-linux.zip"
-ENV ANDROID_SETUP_APIS "26"
-ENV ANDROID_TARGET_API 26
+ENV ANDROID_BUILD_TOOLS_VERSION 25
+ENV ANDROID_TARGET_API 23
 
 ENV PJSIP_DOWNLOAD_URL "https://github.com/pjsip/pjproject/archive/2.10.tar.gz"
 
-ENV SWIG_DOWNLOAD_URL "http://prdownloads.sourceforge.net/swig/swig-4.0.2.tar.gz"
+ENV SWIG_DOWNLOAD_URL "https://github.com/swig/swig/archive/v4.0.2.tar.gz"
 
-ENV OPENSSL_DOWNLOAD_URL "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1k.tar.gz"
+ENV OPENSSL_DOWNLOAD_URL "https://github.com/openssl/openssl/archive/OpenSSL_1_1_1g.tar.gz"
 
 ENV OPENH264_DOWNLOAD_URL "https://github.com/cisco/openh264/tarball/openh264v2.1.0"
 
